@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  background: black;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.intro {
+  font-size: 9rem;
+  font-weight: bold;
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.char-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.block {
+  position: fixed; /* se mide contra el viewport */
+  background: white;
+  z-index: 2;
+}
+
+/* 👇 Aquí el fix */
+.char {
+  position: fixed; /* ya lo tenemos */
+  z-index: 3;
+  color: black;
+  opacity: 1;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canva-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.intro-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80vh;
+}
+
+.footer-text {
+  display: flex;
+  justify-content: center;
+}
