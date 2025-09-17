@@ -1,0 +1,8 @@
+Model Information:
+* title:	Blue jellyfish
+* source:	https://sketchfab.com/3d-models/blue-jellyfish-c7bd4ef6fed94eb6a303dc4f9486028e
+* author:	assetfactory (https://sketchfab.com/assetfactory)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
