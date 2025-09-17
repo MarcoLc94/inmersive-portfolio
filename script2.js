@@ -34,6 +34,7 @@ const floorColor = textureLoader.load(
   "./textures/floor_texture/aerial_rocks_04_diff_2k.jpg"
 );
 floorColor.colorSpace = THREE.SRGBColorSpace;
+floorColor.colorSpace = rgb;
 const floorDis = textureLoader.load(
   "./textures/floor_texture/aerial_rocks_04_disp_2k.png"
 );
