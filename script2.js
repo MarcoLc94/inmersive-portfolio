@@ -8,6 +8,7 @@ import { TextureLoader } from "three";
 
 gsap.registerPlugin(ScrollTrigger);
 const textureLoader = new TextureLoader();
+let mesh;
 
 const tl = gsap.timeline();
 
@@ -17,6 +18,7 @@ const sizes = {
 };
 
 const scene = new THREE.Scene();
+const axesHelper = new THREE.AxesHelper(5);
 
 const canva = document.querySelector(".canva-main");
 
@@ -26,15 +28,14 @@ const camera = new THREE.PerspectiveCamera(
   0.001,
   100
 );
-camera.position.z = 2.5;
-camera.position.y = 0.5;
-camera.rotation.x = 1;
+camera.position.z = 0.5;
+camera.position.y = 1.5;
 
 const floorColor = textureLoader.load(
   "./textures/floor_texture/aerial_rocks_04_diff_2k.jpg"
 );
 floorColor.colorSpace = THREE.SRGBColorSpace;
-floorColor.colorSpace = rgb;
+
 const floorDis = textureLoader.load(
   "./textures/floor_texture/aerial_rocks_04_disp_2k.png"
 );
@@ -58,10 +59,13 @@ const planeMaterial = new THREE.MeshStandardMaterial({
 });
 const floor = new THREE.Mesh(planeGeometry, planeMaterial);
 floor.rotation.x = -Math.PI / 2;
+floorColor.wrapS = THREE.RepeatWrapping;
+floorColor.wrapT = THREE.RepeatWrapping;
+floorColor.repeat.set(10, 10); // cuántas veces se repite la textura
 
 scene.add(floor, ambientalLight, directionalLight);
 
-const controls = new OrbitControls(camera, canva);
+// const controls = new OrbitControls(camera, canva);
 const loader = new GLTFLoader();
 // const gui = new GUI();
 
@@ -71,6 +75,13 @@ loader.load("/models/blue_jellyfish/scene.gltf", (gltf) => {
   model.rotation.x = -1.5;
   model.position.y = 1.3;
   model.position.z = 1;
+
+  model.traverse((child) => {
+    if (child.isMesh) {
+      mesh = child;
+      mesh.geometry.computeBoundingBox(); // útil para normalizar
+    }
+  });
 
   scene.add(model);
 });
@@ -90,7 +101,41 @@ const resizeScreen = () => {
 };
 window.addEventListener("resize", resizeScreen);
 
+const clock = new THREE.Clock();
+const t = clock.getElapsedTime();
+
 const animation = () => {
+  floor.material.map.offset.y = clock.getElapsedTime() * 0.1;
+  floor.material.displacementMap.offset.y = t * 0.1;
+  floor.material.normalMap.offset.y = t * 0.1;
+  floor.material.roughnessMap.offset.y = t * 0.1;
+
+  if (mesh) {
+    const t = clock.getElapsedTime();
+    const pos = mesh.geometry.attributes.position;
+
+    // bounding box para normalizar la altura
+    const bbox = mesh.geometry.boundingBox;
+    const minY = bbox.min.y;
+    const maxY = bbox.max.y;
+    const height = maxY - minY;
+
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+
+      // factor de influencia: 0 en la base, 1 en la punta
+      const influence = (maxY - y) / height;
+
+      // onda proporcional al influence
+      const wave = Math.sin(z * 5 + t * 3) * 0.05 * influence;
+
+      pos.setX(i, x + wave);
+    }
+
+    pos.needsUpdate = true;
+  }
   renderer.render(scene, camera);
   requestAnimationFrame(animation);
 };
@@ -99,17 +144,20 @@ animation();
 
 tl.to(
   camera.position,
+
   {
-    z: 0.7,
+    delay: 1,
+    z: 0.6,
     y: 1,
-    x: 2,
-    duration: 2,
+    x: 1.7,
+    duration: 8,
   },
   0
 ).to(
   camera.rotation,
   {
-    y: 1.5,
+    delay: 1,
+    y: 1.8,
     duration: 3,
   },
   0

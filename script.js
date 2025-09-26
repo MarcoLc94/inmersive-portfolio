@@ -155,7 +155,7 @@ splitText.chars.forEach((char, i) => {
       block,
       {
         opacity: 0,
-        duration: 0.3,
+        duration: 1,
       },
       i * 0.2 + 0.9
     );
@@ -186,10 +186,7 @@ tl.to(".intro", {
   duration: 2,
 });
 
-tl.to(".intro", {
-  scale: 200,
-  ease: "power1",
-  x: 1600,
+tl.to(".intro-container", {
   duration: 1,
   opacity: 0,
   display: "none",
